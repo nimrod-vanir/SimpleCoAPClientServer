@@ -1,6 +1,10 @@
 import logging
 import asyncio
+import sys
+import random
+import asyncio
 
+import aiocoap.resource as resource
 from aiocoap import *
 
 logging.basicConfig(level=logging.INFO)
@@ -13,14 +17,25 @@ async def main():
 
     context = await Context.create_client_context()
 
-    await asyncio.sleep(2)
+    if(sys.argv[1] == "GET"):
+        request = Message(code=GET, uri='coap://localhost/.well-known/core')
+        try:
+            response = await context.request(request).response
+        except Exception as e:
+            print('Failed to fetch resource:')
+            print(e)
+        else:
+            print('Result: %s\n%r'%(response.code, response.payload))
 
-    payload = b"The quick brown fox jumps over the lazy dog.\n" * 30
-    request = Message(code=PUT, payload=payload, uri="coap://localhost/other/block")
+    elif(sys.argv[1] == "PUT" and sys.argv[2]):
+        await asyncio.sleep(random.uniform(0, 2))
 
-    response = await context.request(request).response
+        payload = sys.argv[2].encode('UTF-8')
+        request = Message(code=PUT, payload=payload, uri="coap://localhost/.well-known/core")
 
-    print('Result: %s\n%r'%(response.code, response.payload))
+        response = await context.request(request).response
+
+        print('Result: %s\n%r'%(response.code, response.payload))
 
 if __name__ == "__main__":
     asyncio.get_event_loop().run_until_complete(main())
