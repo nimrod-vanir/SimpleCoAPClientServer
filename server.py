@@ -26,9 +26,14 @@ class IoTResource(resource.Resource):
 
     async def render_get(self, request):
         print(self.resourceDict)
-        print(request)
-        return aiocoap.Message(payload=str(self.resourceDict).encode('UTF-8'))
-
+        print(request.payload)
+        requestPayload = request.payload.decode('UTF-8')
+        if requestPayload == "all":
+            return aiocoap.Message(payload=str(self.resourceDict).encode('UTF-8'))
+        elif requestPayload in self.resourceDict:
+            return aiocoap.Message(payload=str(self.resourceDict[requestPayload]).encode('UTF-8'))
+        else:
+            return aiocoap.Message(payload="INVALID REQUEST".encode('UTF-8'))
     async def render_put(self, request):
         print('PUT payload: %s' % request.payload)
         self.set_content(request.payload)
