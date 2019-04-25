@@ -1,2 +1,2 @@
 # SimpleCoAPClientServer
-CoAP simulator using aiocoap &amp; python2.7
+CoAP simulator using aiocoap &amp; python3
