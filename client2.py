@@ -18,7 +18,7 @@ async def main():
     context = await Context.create_client_context()
 
     if(sys.argv[1] == "GET"):
-        request = Message(code=GET, uri='coap://localhost/.well-known/core')
+        request = Message(code=GET, payload=sys.argv[2].encode('UTF-8'), uri='coap://localhost/.well-known/core')
         try:
             response = await context.request(request).response
         except Exception as e:
