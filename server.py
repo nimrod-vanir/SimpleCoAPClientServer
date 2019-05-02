@@ -14,19 +14,20 @@ class IoTResource(resource.Resource):
     def __init__(self):
         super().__init__()
         self.resourceDict = {}
+        self.resourceDict["temp"] = "32.5"
+        self.resourceDict["humidity"] = "10"
+        self.resourceDict["pressure"] = "101.325"
+        self.resourceDict["light"] = "85.5"
+        self.resourceDict["altitiude"] = "1000"
 
     def set_content(self, content):
         key = content.decode('UTF-8').split(":")[0]
         value = content.decode('UTF-8').split(":")[1]
-        print("HERE" + key + " : " + value)
-        # print(content.decode('UTF-8'))
         self.resourceDict[key] = value
         self.content = content
 
 
     async def render_get(self, request):
-        print(self.resourceDict)
-        print(request.payload)
         requestPayload = request.payload.decode('UTF-8')
         if requestPayload == "all":
             return aiocoap.Message(payload=str(self.resourceDict).encode('UTF-8'))
@@ -34,6 +35,7 @@ class IoTResource(resource.Resource):
             return aiocoap.Message(payload=str(self.resourceDict[requestPayload]).encode('UTF-8'))
         else:
             return aiocoap.Message(payload="INVALID REQUEST".encode('UTF-8'))
+
     async def render_put(self, request):
         print('PUT payload: %s' % request.payload)
         self.set_content(request.payload)
